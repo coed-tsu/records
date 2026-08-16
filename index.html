@@ -624,9 +624,12 @@ const DOCS = [
  {tag:"Undergraduate", t:"Teacher Education Monitoring Tool",
   d:"Curriculum, administration, faculty, library and physical facilities for the thirteen undergraduate teacher education programs.",
   u:"https://docs.google.com/spreadsheets/d/1gRnMcPD4Pehb6L8U4iyC72RplbQFm4tR/edit?usp=sharing"},
- {tag:"Graduate", t:"Graduate Programs Evaluation Instrument",
-  d:"Eligibility, curriculum, institutional arrangement and programme requirements for the graduate education programs.",
-  u:"https://docs.google.com/document/d/1NJmrNPMAD2IFWD91zAM2aqbPqR0qm4Gb/edit?usp=drive_link"},
+ {tag:"Graduate", t:"Master's Programs Evaluation Instrument",
+  d:"Eligibility, curriculum, institutional arrangement and programme requirements for the eight master's programs.",
+  u:"https://docs.google.com/document/d/10NUZyBCykd-2wrErx9udBEuuglDTuVO4/edit?usp=sharing"},
+ {tag:"Graduate", t:"Doctorate Programs Evaluation Instrument",
+  d:"The same areas of evaluation applied to the five doctoral programs: two EdD majors and three PhD programs.",
+  u:"https://docs.google.com/document/d/1UrHhDP22QqknI2CU7RhEN_IvNDELUuxa/edit?usp=sharing"},
  {tag:"Institution-wide", t:"Monitoring Checklist Common to All Programs",
   d:"School personnel, the library, the faculty manual, and the buildings, support facilities and support services shared by every program.",
   u:"https://docs.google.com/spreadsheets/d/1pSuJZ7JPej2D9Ocoq8NsXBzID78hmlCc/edit?usp=sharing"},
@@ -640,6 +643,9 @@ const DOCS = [
   d:"Institutional data, tertiary education subsidy, and the Tulong Dunong programme.",
   u:"https://docs.google.com/document/d/12gQLTpBS-91FhzEyJR8RgYtIdlTrfJrd/edit?usp=drive_link"}
 ];
+
+/* An instrument with no link yet is left out rather than shown as a dead card. */
+const LIVE_DOCS = DOCS.filter(d => d.u && d.u.indexOf("PASTE") === -1);
 
 const SECTIONS = {
  "01_TEACHER_EDUCATION_UNDERGRADUATE":["I","Undergraduate Programs","Teacher education"],
@@ -905,7 +911,7 @@ function renderDocs(){
   setBand("Evaluation Instruments","Completed forms &nbsp;&#183;&nbsp; College of Education");
   content.innerHTML='<p class="caption">The completed self assessment forms. Each one links back to the record folders shown elsewhere in this portal.</p>';
   const g=document.createElement("div");g.className="docs";
-  DOCS.forEach(d=>{
+  LIVE_DOCS.forEach(d=>{
     const c=document.createElement("div");c.className="doc";
     c.innerHTML='<span class="doctag">'+d.tag+'</span><b>'+d.t+'</b><p>'+d.d+'</p>'+
       '<a href="'+d.u+'" target="_blank" rel="noopener">Open document '+ICON_OPEN+'</a>';
@@ -1045,7 +1051,7 @@ function openSummary(){
     '<div><b>'+rows.length+'</b><span>Areas</span></div>'+
     '<div><b>'+total+'</b><span>Record folders</span></div>'+
     '<div><b>'+PROGRAMS+'</b><span>Programs monitored</span></div>'+
-    '<div><b>'+DOCS.length+'</b><span>Instruments</span></div></div>';
+    '<div><b>'+LIVE_DOCS.length+'</b><span>Instruments</span></div></div>';
   html+='<table class="sumtab"><thead><tr><th>Area</th><th>Record folders</th></tr></thead><tbody>';
   rows.forEach(r=>{html+='<tr><td>'+r[0]+'. '+r[1]+'</td><td class="num">'+r[2]+'</td></tr>';});
   html+='<tr><td>Total</td><td class="num">'+total+'</td></tr></tbody></table>';
