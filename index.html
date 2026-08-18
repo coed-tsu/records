@@ -681,9 +681,25 @@ const DOC_EVIDENCE = {
 function fidOf(x){return x && x.u ? x.u.split('/').pop() : '';}
 /* The evidence line for a folder, or the nearest one above it, so an
    operator standing in a program sub folder still sees what to place. */
+/* Distinct evidence named anywhere beneath a folder, so a container row still
+   tells the operator what the area is asking for. Capped to stay readable. */
+function evidenceUnder(node){
+  const out=[];
+  (function walk(x){
+    const e=DOC_EVIDENCE[fidOf(x)];
+    if(e) e.split(" \u00b7 ").forEach(t=>{if(out.indexOf(t)<0)out.push(t);});
+    x.c.forEach(walk);
+  })(node);
+  if(!out.length) return null;
+  return out.length>4 ? out.slice(0,4).join(" \u00b7 ")+" \u00b7 \u2026" : out.join(" \u00b7 ");
+}
 function evidenceFor(node,path){
   const own=DOC_EVIDENCE[fidOf(node)];
   if(own) return own;
+  if(node&&node.c&&node.c.length){
+    const agg=evidenceUnder(node);
+    if(agg) return agg;
+  }
   for(let i=path.length;i>0;i--){
     const anc=nodeAt(path.slice(0,i));
     const e=anc?DOC_EVIDENCE[fidOf(anc)]:null;
@@ -705,7 +721,7 @@ const DOCS = [
   d:"Eligibility, curriculum, institutional arrangement and programme requirements for the eight master's programs.",
   u:"https://docs.google.com/document/d/10NUZyBCykd-2wrErx9udBEuuglDTuVO4/edit?usp=sharing"},
  {tag:"Graduate", t:"Doctorate Programs Evaluation Instrument",
-  d:"The same areas of evaluation applied to the five doctoral programs: two EdD majors and three PhD programs.",
+  d:"Evaluated against the doctorate instrument: two EdD majors and three PhD programs.",
   u:"https://docs.google.com/document/d/1UrHhDP22QqknI2CU7RhEN_IvNDELUuxa/edit?usp=sharing"},
  {tag:"Institution-wide", t:"Monitoring Checklist Common to All Programs",
   d:"School personnel, the library, the faculty manual, and the buildings, support facilities and support services shared by every program.",
@@ -739,7 +755,7 @@ const SECTIONS = {
 const CAP = {
  "01_TEACHER_EDUCATION_UNDERGRADUATE":"Records for the thirteen undergraduate teacher education programs, arranged in the order of the evaluation instrument: curriculum, administration, faculty, library, then physical facilities.",
  "02_GRADUATE_MASTERS":"Records for the eight master's programs offered by the College, covering eligibility, curriculum, research arrangements and programme requirements.",
- "03_GRADUATE_DOCTORATE":"Records for the five doctoral programs, following the same areas of evaluation as the master's programs.",
+ "03_GRADUATE_DOCTORATE":"Records for the five doctoral programs, arranged as in the doctorate evaluation instrument.",
  "04_COMMON_AREAS":"Records common to all programs: school personnel, the library, the faculty manual, and the buildings, support facilities and support services of the institution.",
  "05_SAS":"The twenty two student services grouped as student welfare, student development, and institutional programs.",
  "06_TOSF":"Fee schedules and the documented use of tuition increase proceeds.",
