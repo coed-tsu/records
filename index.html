@@ -430,6 +430,24 @@ a{color:inherit;text-decoration:none}
   color:var(--gold);margin-bottom:5px;font-weight:700;
 }
 
+.consider{
+  margin:0 0 18px;max-width:74ch;
+  font-family:var(--data);font-size:12px;line-height:1.6;
+  font-style:italic;color:var(--dim);
+}
+.consider>span{display:block;font-style:italic;font-weight:600;margin-bottom:2px}
+.consider .consnote{margin:0 0 7px}
+.consider h4{
+  display:block;margin:8px 0 1px;font-family:var(--data);font-size:12px;
+  font-style:italic;font-weight:600;color:var(--dim);letter-spacing:0;
+}
+.consider h4:first-of-type{margin-top:0}
+.consider h4 em{font-style:italic;font-weight:400}
+.consider p{margin:0 0 3px}
+.consider ul{margin:1px 0 5px;padding-left:16px}
+.consider li{margin-bottom:1px}
+.consider b{font-weight:600;font-style:italic}
+
 /* ================= responsive ================= */
 .mobtoggle{display:none}
 /* laptops and small desktops */
@@ -692,6 +710,23 @@ function evidenceUnder(node){
   })(node);
   if(!out.length) return null;
   return out.length>4 ? out.slice(0,4).join(" \u00b7 ")+" \u00b7 \u2026" : out.join(" \u00b7 ");
+}
+const DOC_CONSIDER = {
+"1FS-wo_1Y5Ord7T1SMJliQ16NyQF56ttT":"<h4>Section 6. Program Levels and Outcomes <em>(For Doctoral Program)</em></h4><p>Doctoral programs are aligned with <b>Level 8 of the PQF</b>. <em>(Refer to AREA V of the Instrument: OBE Requirement, Section 15-2: OBE Graduate Program Design.)</em></p><h4>Section 7. Types of Graduate Program</h4><p>The program offered, or being proposed, must be aligned with the type of doctoral programs specified in <b>Section 7-III of CMO 15, s. 2019</b>.</p>",
+"1xH5WEpr4c2uwgEH4mrQ78rt97iYsVpQT":"<h4>Section 8. Major Requirement and Student Output</h4><p><b>Section 8.B-1: For PhD (Academic Track)</b></p><ul><li>Passing of comprehensive examination</li><li>Publicly defended dissertation <b>(Theory-building)</b></li><li>Publication in an <b>internationally or nationally indexed</b> journal, or juried creative work outlet</li></ul><p><b>Section 8.B-2: For PhD (Research Track)</b></p><ul><li>Passing of comprehensive examination</li><li>Publicly defended dissertation <b>(Theory-building)</b></li><li>Publication in an <b>internationally or nationally indexed</b> journal, or juried creative work outlet</li></ul><h4>Section 9. Publication Requirement for Graduate Studies</h4><p>Students in the PhD Academic and Research Tracks are required to have publication in internationally or nationally indexed journals, or juried creative work.</p>",
+"1EK9SS6GvbBig5PDde14eWtn7sWR5dYMC":"<h4>Section 11. Curricular and Developmental Initiatives</h4><p>The HEI has the flexibility to innovate and enhance its curricular offerings, but must comply with the prescribed minimum curricular requirements, aligned with the learning standards or outcomes-based education (OBE).</p><p><em>For the required minimum number of units, major curricular requirements and student outputs, refer to Article I, Section 8, “Summary of Matrix of Graduate Programs”, of CMO No. 15, s. 2019.</em></p><h4>Section 8.B-1: For PhD (Academic Track)</h4><p>At least <b>24 units of coursework</b> and at least <b>12 units of Dissertation Writing</b>.</p><h4>Section 8.B-2: For PhD (Research Track)</h4><ul><li>At least <b>75% of the total units</b> focused on research and dissertation work</li><li>All units to be taken are by research (<b>no coursework</b>)</li><li>The total number of units is determined by the HEI</li><li>Students are required to have a minimum residency of <b>3 years on a full-time basis</b></li></ul>"
+};
+/* The doctoral points to consider for a folder, or the nearest one above
+   it, so an operator inside a program sub folder still sees them. */
+function considerFor(node,path){
+  const own=DOC_CONSIDER[fidOf(node)];
+  if(own) return own;
+  for(let i=path.length;i>0;i--){
+    const anc=nodeAt(path.slice(0,i));
+    const c=anc?DOC_CONSIDER[fidOf(anc)]:null;
+    if(c) return c;
+  }
+  return null;
 }
 function evidenceFor(node,path){
   const own=DOC_EVIDENCE[fidOf(node)];
@@ -994,6 +1029,10 @@ function renderBrowse(){
   const evi=evidenceFor(node,path);
   let html=cap?'<p class="caption">'+cap+'</p>':"";
   if(evi) html+='<p class="evibox"><span>Evidence to attach</span>'+evi+'</p>';
+  const cons=considerFor(node,path);
+  if(cons) html+='<div class="consider"><span>Points to consider for doctoral programs:</span>'+
+    '<p class="consnote">These requirements differ from the master\u2019s programs. '+
+    'Check the documents against them before uploading.</p>'+cons+'</div>';
   if(node&&node.u)html+='<div class="meta"><a class="openhere" href="'+node.u+
     '" target="_blank" rel="noopener">Open this folder</a></div>';
   content.innerHTML=html;
